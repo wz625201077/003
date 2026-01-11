@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>视频合集</title>
+    <style>
+        /* 重置默认样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: "Microsoft Yahei", sans-serif;
+            background-color: #f5f5f5;
+            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        /* 视频容器整体布局 */
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* 单个视频卡片基础样式 */
+        .video-card {
+            width: 100%;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 卡片悬停效果增强 */
+        .video-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* 发光边框动画 */
+        @keyframes glow-border {
+            0% { box-shadow: 0 0 5px var(--card-glow-color), 0 0 10px var(--card-glow-color), 0 2px 8px rgba(0, 0, 0, 0.1); }
+            50% { box-shadow: 0 0 15px var(--card-glow-color), 0 0 20px var(--card-glow-color), 0 4px 16px rgba(0, 0, 0, 0.15); }
+            100% { box-shadow: 0 0 5px var(--card-glow-color), 0 0 10px var(--card-glow-color), 0 2px 8px rgba(0, 0, 0, 0.1); }
+        }
+
+        /* 为每个卡片设置不同的发光颜色 */
+        .video-card:nth-child(1) {
+            --card-glow-color: #FF5252; /* 红色 */
+            border: 2px solid #FF5252;
+            animation: glow-border 2s infinite;
+        }
+
+        .video-card:nth-child(2) {
+            --card-glow-color: #448AFF; /* 蓝色 */
+            border: 2px solid #448AFF;
+            animation: glow-border 2s infinite 0.3s;
+        }
+
+        .video-card:nth-child(3) {
+            --card-glow-color: #4CAF50; /* 绿色 */
+            border: 2px solid #4CAF50;
+            animation: glow-border 2s infinite 0.6s;
+        }
+
+        .video-card:nth-child(4) {
+            --card-glow-color: #FFAB40; /* 橙色 */
+            border: 2px solid #FFAB40;
+            animation: glow-border 2s infinite 0.9s;
+        }
+
+        .video-card:nth-child(5) {
+            --card-glow-color: #9C27B0; /* 紫色 */
+            border: 2px solid #9C27B0;
+            animation: glow-border 2s infinite 1.2s;
+        }
+
+        .video-card:nth-child(6) {
+            --card-glow-color: #00BCD4; /* 青色 */
+            border: 2px solid #00BCD4;
+            animation: glow-border 2s infinite 1.5s;
+        }
+
+        /* 外部网页框架容器 - 高度增加一倍（从75%改为150%） */
+        .external-frame-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 150%; /* 原75% → 150%，高度增加一倍 */
+            margin-top: 15px;
+            overflow: hidden;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .external-frame-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .frame-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 5;
+        }
+
+        /* 响应式优化 - 同步调整框架高度 */
+        @media (max-width: 380px) {
+            .external-frame-wrapper {
+                padding-top: 150%; /* 保持一倍高度增加 */
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .video-card {
+                width: calc(50% - 10px);
+            }
+            .external-frame-wrapper {
+                padding-top: 150%; /* 保持一倍高度增加 */
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .video-card {
+                width: calc(33.333% - 10px);
+            }
+            .external-frame-wrapper {
+                padding-top: 150%; /* 保持一倍高度增加 */
+            }
+        }
+
+        /* 视频iframe容器 */
+        .iframe-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 75%; /* 4:3 比例保持不变 */
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .iframe-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- 第一个视频卡片（红色）- 对应qq001.html -->
+        <div class="video-card">
+            <div class="iframe-wrapper">
+                <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=115844981987115&bvid=BV1QcqFBGEow&cid=35214135200&p=1" scrolling="no" allowfullscreen="true"></iframe>
+            </div>
+            <div class="external-frame-wrapper">
+                <div class="frame-loading">加载中...</div>
+                <iframe class="external-frame" loading="lazy"></iframe>
+            </div>
+        </div>
+		
+        <!-- 第二个视频卡片（蓝色）- 对应qq002.html -->
+        <div class="video-card">
+            <div class="iframe-wrapper">
+                <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=115844931653888&bvid=BV1XfifBCEUu&cid=35214131936&p=1" scrolling="no" allowfullscreen="true"></iframe>
+            </div>
+            <div class="external-frame-wrapper">
+                <div class="frame-loading">加载中...</div>
+                <iframe class="external-frame" loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <!-- 第三个视频卡片（绿色）- 对应qq003.html -->
+        <div class="video-card">
+            <div class="iframe-wrapper">
+                <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=115844931656210&bvid=BV1XfifBCELo&cid=35214132070&p=1" scrolling="no" allowfullscreen="true"></iframe>
+            </div>
+            <div class="external-frame-wrapper">
+                <div class="frame-loading">加载中...</div>
+                <iframe class="external-frame" loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <!-- 第四个视频卡片（橙色）- 对应qq004.html -->
+        <div class="video-card">
+            <div class="iframe-wrapper">
+                <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=115844931655719&bvid=BV1XfifBCEMF&cid=35214132097&p=1" scrolling="no" allowfullscreen="true"></iframe>
+            </div>
+            <div class="external-frame-wrapper">
+                <div class="frame-loading">加载中...</div>
+                <iframe class="external-frame" loading="lazy"></iframe>
+            </div>
+        </div>
+		
+		<!-- 第五个视频卡片（紫色）- 对应qq005.html -->
+        <div class="video-card">
+            <div class="iframe-wrapper">
+                <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=115868168098936&bvid=BV1KKr3BVE62&cid=35292381958&p=1" scrolling="no" allowfullscreen="true"></iframe>
+            </div>
+            <div class="external-frame-wrapper">
+                <div class="frame-loading">加载中...</div>
+                <iframe class="external-frame" loading="lazy"></iframe>
+            </div>
+        </div>
+				
+		<!-- 第六个视频卡片（青色）- 对应qq006.html -->
+        <div class="video-card">
+            <div class="iframe-wrapper">
+                <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=115844931655488&bvid=BV1XfifBCEBV&cid=35214132345&p=1" scrolling="no" allowfullscreen="true"></iframe>
+            </div>
+            <div class="external-frame-wrapper">
+                <div class="frame-loading">加载中...</div>
+                <iframe class="external-frame" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 固定URL映射表 - 索引0对应第一个框架，索引1对应第二个，以此类推
+            const externalPages = [
+                'https://www.wyz006.cn/qq/qq001.html', // 第一个框架
+                'https://www.wyz006.cn/qq/qq002.html', // 第二个框架
+                'https://www.wyz006.cn/qq/qq003.html', // 第三个框架
+                'https://www.wyz006.cn/qq/qq004.html', // 第四个框架
+                'https://www.wyz006.cn/qq/qq005.html', // 第五个框架
+                'https://www.wyz006.cn/qq/qq006.html'  // 第六个框架
+            ];
+            
+            // 获取所有外部框架和加载提示元素
+            const externalFrames = document.querySelectorAll('.external-frame');
+            const frameLoadings = document.querySelectorAll('.frame-loading');
+            
+            // 严格按索引匹配分配URL
+            externalFrames.forEach((frame, index) => {
+                // 仅处理前6个框架，避免越界
+                if (index < externalPages.length) {
+                    // 为当前框架设置对应的固定URL
+                    frame.src = externalPages[index];
+                    
+                    // 加载完成后隐藏loading提示
+                    frame.addEventListener('load', function() {
+                        if (frameLoadings[index]) {
+                            frameLoadings[index].style.display = 'none';
+                        }
+                    });
+                    
+                    // 加载失败时显示错误提示
+                    frame.addEventListener('error', function() {
+                        if (frameLoadings[index]) {
+                            frameLoadings[index].textContent = '加载失败，请稍后重试';
+                            frameLoadings[index].style.color = '#FF5252';
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
